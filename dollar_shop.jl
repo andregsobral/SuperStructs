@@ -24,32 +24,3 @@ struct Product
     @meta
     # Java-like stactic properties
 end
-
-
-macro super(expr)
-    expr = macroexpand(__module__, expr) 
-    expr isa Expr && expr.head === :struct || error("Invalid usage of @super")
-    expr = expr::Expr
-    
-    T = expr.args[2]
-    if T isa Expr && T.head === :<:
-        T = T.args[1]
-    end
-    
-    params_ex = Expr(:parameters)
-    call_args = Any[]
-
-    _super!(expr.args[3], params_ex.args, call_args)
-
-    # Only define a constructor if the type has fields
-    if !isempty(params_ex.args)
-
-    else
-        kwdefs = nothing
-    end
-
-    quote
-        Base.@__doc__($(esc(expr)))
-        $kwdefs
-    end
-end
